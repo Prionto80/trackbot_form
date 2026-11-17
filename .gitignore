@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment and sensitive configuration
+.env
+*.env
+!.env.example
+
+# Local submission data and uploaded files
+submissions.json
+uploads/
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db

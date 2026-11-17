@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Response Recorded - Trackbot 1.0</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <main class="card response-card">
+    <!-- Club & University Logos -->
+    <div class="logo-header">
+      <img src="/static/images/ewu.png" alt="East West University" class="brand-logo ewu-logo">
+      <div class="logo-divider"></div>
+      <img src="/static/images/ewurc.png" alt="EWURC" class="brand-logo ewurc-logo">
+    </div>
+
+    <div class="success-badge">
+      <span class="check-icon">✓</span>
+    </div>
+
+    <h1>Thank you!</h1>
+    <h2 class="response-subtitle">Your response is done!</h2>
+
+    <p class="response-message">
+      Your registration for <strong>Trackbot 1.0</strong> has been successfully submitted and recorded. 
+      East West University Robotics Club (EWURC) has received your details and payment proof.
+    </p>
+
+    <div class="response-details" id="responseDetails" style="display: none;">
+      <div class="detail-row" id="rowName" style="display: none;">
+        <span class="detail-label">Full Name:</span>
+        <span class="detail-value" id="detailName"></span>
+      </div>
+      <div class="detail-row" id="rowId" style="display: none;">
+        <span class="detail-label">Student ID:</span>
+        <span class="detail-value" id="detailId"></span>
+      </div>
+      <div class="detail-row" id="rowTrx" style="display: none;">
+        <span class="detail-label">Transaction ID:</span>
+        <span class="detail-value" id="detailTrx"></span>
+      </div>
+      <div class="detail-row" id="rowSync" style="display: none;">
+        <span class="detail-label">Google Sync:</span>
+        <span class="detail-value" style="color: #6ee7b7;">✓ Synced to Google Sheet</span>
+      </div>
+    </div>
+
+    <div class="response-actions">
+      <a href="/" class="btn back-btn">
+        <span class="btn-text">Submit another response</span>
+      </a>
+    </div>
+  </main>
+
+  <script>
+    // Extract query parameters if present
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    const id = params.get('id');
+    const trx = params.get('trx');
+    const synced = params.get('synced');
+
+    const detailsBox = document.getElementById('responseDetails');
+    let hasDetails = false;
+
+    if (name) {
+      document.getElementById('detailName').textContent = name;
+      document.getElementById('rowName').style.display = 'flex';
+      hasDetails = true;
+    }
+    if (id) {
+      document.getElementById('detailId').textContent = id;
+      document.getElementById('rowId').style.display = 'flex';
+      hasDetails = true;
+    }
+    if (trx) {
+      document.getElementById('detailTrx').textContent = trx;
+      document.getElementById('rowTrx').style.display = 'flex';
+      hasDetails = true;
+    }
+    if (synced === '1' || synced === 'true') {
+      document.getElementById('rowSync').style.display = 'flex';
+      hasDetails = true;
+    }
+
+    if (hasDetails) {
+      detailsBox.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trackbot 1.0 - EWURC Recruitment</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <main class="card">
+    <!-- Club and University Logos -->
+    <div class="logo-header">
+      <img src="/static/images/ewu.png" alt="East West University" class="brand-logo ewu-logo">
+      <div class="logo-divider"></div>
+      <img src="/static/images/ewurc.png" alt="EWURC" class="brand-logo ewurc-logo">
+    </div>
+
+    <h1>Trackbot 1.0</h1>
+    <p class="subtitle">East West University Robotics Club (EWURC)</p>
+
+    <div id="alertBox" class="alert-box" style="display: none;"></div>
+
+    <form id="recruitmentForm" enctype="multipart/form-data">
+      <!-- 1. Full Name -->
+      <div class="field">
+        <input id="full_name" name="full_name" type="text" placeholder=" " required autocomplete="name">
+        <label for="full_name">Full Name</label>
+      </div>
+
+      <!-- 2. Student Id -->
+      <div class="field">
+        <input id="student_id" name="student_id" type="text" placeholder=" " required autocomplete="off">
+        <label for="student_id">Student Id</label>
+      </div>
+
+      <!-- 3. Mail Address (Personal) -->
+      <div class="field">
+        <input id="email" name="email" type="email" placeholder=" " required autocomplete="email">
+        <label for="email">Mail Address (Personal)</label>
+      </div>
+
+      <!-- 4. Contact Number -->
+      <div class="field">
+        <input id="contact_number" name="contact_number" type="tel" placeholder=" " required autocomplete="tel">
+        <label for="contact_number">Contact Number</label>
+      </div>
+
+      <!-- 5. Previous Experience on Robotics -->
+      <div class="choice-group">
+        <div class="choice-title">Previous Experience on Robotics <span class="required-star">*</span></div>
+        <div class="radio-options">
+          <label class="radio-label">
+            <input type="radio" name="experience" value="Yes" required>
+            <span class="radio-custom"></span>
+            <span class="radio-text">Yes</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="experience" value="No">
+            <span class="radio-custom"></span>
+            <span class="radio-text">No</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="experience" value="Other" id="radioOther">
+            <span class="radio-custom"></span>
+            <span class="radio-text">Other:</span>
+          </label>
+        </div>
+
+        <div class="field other-field" id="otherContainer" style="display: none;">
+          <input id="experience_other" name="experience_other" type="text" placeholder=" ">
+          <label for="experience_other">Specify your experience</label>
+        </div>
+      </div>
+
+      <!-- 6. Payment Information & Transaction ID -->
+      <div class="payment-card">
+        <div class="payment-header">
+          <span class="payment-badge">bKash Send Money</span>
+          <span class="payment-note">Required</span>
+        </div>
+        <div class="payment-number-row">
+          <div>
+            <div class="payment-label">Send Money to:</div>
+            <div class="payment-number" id="bkashNumber">01847128593</div>
+          </div>
+          <button type="button" class="copy-btn" id="copyBtn" title="Copy Number">
+            <span id="copyText">Copy</span>
+          </button>
+        </div>
+        <div class="payment-reference">
+          Use <strong>YourName_Trackbot</strong> in bKash reference.
+        </div>
+      </div>
+
+      <div class="field" style="margin-top: 14px;">
+        <input id="transaction_id" name="transaction_id" type="text" placeholder=" " required autocomplete="off">
+        <label for="transaction_id">Attach the transaction ID</label>
+      </div>
+
+      <!-- 7. Payment Proof (Screenshot) -->
+      <div class="file-field">
+        <div class="field-heading">Payment Proof (Screenshot) <span class="required-star">*</span></div>
+        <label class="file-label" for="screenshot">
+          <span class="file-icon">📎</span>
+          <span class="file-text" id="fileText">Add file (JPG, PNG, WEBP)</span>
+          <span class="file-subtext">Max file size: 5MB</span>
+        </label>
+        <input id="screenshot" name="screenshot" type="file" accept="image/*" required>
+        
+        <div id="filePreview" class="file-preview" style="display: none;">
+          <img id="previewImg" src="" alt="Screenshot Preview">
+          <button type="button" id="removeFile" class="remove-btn" title="Remove image">&times;</button>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn" id="submitBtn">
+        <span class="btn-text">Submit Application</span>
+        <span class="loader"></span>
+      </button>
+    </form>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
