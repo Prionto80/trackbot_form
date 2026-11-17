@@ -17,8 +17,20 @@ from fastapi.templating import Jinja2Templates
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
-UPLOADS_DIR = BASE_DIR / "uploads"
-SUBMISSIONS_FILE = BASE_DIR / "submissions.json"
+
+# Serverless read-only filesystem check (Vercel Lambda)
+IS_SERVERLESS = os.getenv("VERCEL") == "1" or not os.access(BASE_DIR, os.W_OK)
+if IS_SERVERLESS:
+    UPLOADS_DIR = Path("/tmp/uploads")
+    SUBMISSIONS_FILE = Path("/tmp/submissions.json")
+else:
+    UPLOADS_DIR = BASE_DIR / "uploads"
+    SUBMISSIONS_FILE = BASE_DIR / "submissions.json"
+
+try:
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception as dir_err:
+    print(f"Notice: uploads directory mkdir handled for serverless: {dir_err}")
 
 # Automatically load environment variables from .env if present
 env_file = BASE_DIR / ".env"
@@ -36,9 +48,6 @@ if env_file.exists():
 # Google Apps Script Web App URL from .env or environment
 GOOGLE_APPS_SCRIPT_URL = os.getenv("GOOGLE_APPS_SCRIPT_URL", "").strip()
 
-# Ensure directories exist
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-
 app = FastAPI(
     title="Trackbot 1.0 - EWURC Recruitment",
     description="East West University Robotics Club - Trackbot 1.0 Recruitment Form API",
@@ -46,26 +55,33 @@ app = FastAPI(
 
 # Mount static files & uploads
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+if UPLOADS_DIR.exists():
+    try:
+        app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+    except Exception:
+        pass
 
 # Configure Jinja2 templates
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 def save_submission(record: dict):
-    """Save registration record to JSON file."""
-    submissions = []
-    if SUBMISSIONS_FILE.exists():
-        try:
-            with open(SUBMISSIONS_FILE, "r", encoding="utf-8") as f:
-                submissions = json.load(f)
-        except Exception:
-            submissions = []
+    """Save registration record to JSON file (failsafe on read-only serverless)."""
+    try:
+        submissions = []
+        if SUBMISSIONS_FILE.exists():
+            try:
+                with open(SUBMISSIONS_FILE, "r", encoding="utf-8") as f:
+                    submissions = json.load(f)
+            except Exception:
+                submissions = []
 
-    submissions.append(record)
+        submissions.append(record)
 
-    with open(SUBMISSIONS_FILE, "w", encoding="utf-8") as f:
-        json.dump(submissions, f, indent=2, ensure_ascii=False)
+        with open(SUBMISSIONS_FILE, "w", encoding="utf-8") as f:
+            json.dump(submissions, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Notice: local submissions file write skipped on serverless: {e}")
 
 
 def send_to_google_apps_script(
@@ -238,9 +254,12 @@ async def register_applicant(
     unique_filename = f"{clean_id}_{uuid.uuid4().hex[:8]}{ext}"
     saved_file_path = UPLOADS_DIR / unique_filename
 
-    # Save screenshot locally to disk
-    with open(saved_file_path, "wb") as f:
-        f.write(content)
+    # Save screenshot locally to disk if filesystem allows
+    try:
+        with open(saved_file_path, "wb") as f:
+            f.write(content)
+    except Exception as fs_err:
+        print(f"Notice: local screenshot write skipped on serverless: {fs_err}")
 
     # Determine MIME type
     mime_type = "image/png"
